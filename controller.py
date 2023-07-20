@@ -9,21 +9,22 @@ def search_module():
 
 
 def start():
+    main_phone_book = model.PhoneBook()
     while True:
         user_select = view.show_menu()
         match user_select:
             case 1:
-                model.open_file()
+                main_phone_book.open_file()
                 view.print_msg(text.load_successful)
             case 2:
-                model.save_file()
+                main_phone_book.save_file()
                 view.print_msg(text.save_successful)
             case 3:
-                pb = model.phone_book
+                pb = main_phone_book.phone_book
                 view.show_contact(pb, text.empty_book)
             case 4:
                 contact = view.input_new_contact(text.fields_new_contact)
-                model.add_contact(contact)
+                main_phone_book.add_contact(contact)
                 view.print_msg(text.new_contact_successful(contact[0]))
             case 5:
                 search_module()
@@ -31,21 +32,27 @@ def start():
                 search_module()
                 uid = view.input_number(text.input_rename_uid)
                 rename = view.input_new_contact(text.fields_rename_contact)
-                name = model.change_contact(uid,rename)
+                name = main_phone_book.change_contact(uid,rename)
                 view.print_msg(text.rename_contact_successful(name))
             case 7:
                 search_module()
                 uid = view.input_number(text.input_del_uid)
-                name = model.delete_contact(uid)
+                name = main_phone_book.delete_contact(uid)
                 view.print_msg(text.contact_deleted(name))
             case 8:
                 num_records = view.input_number(text.input_number_of_records)
                 if 0 < int(num_records) <= 50:
-                    model.add_bunch_of_records(num_records)
+                    main_phone_book.add_bunch_of_records(num_records)
                     view.print_msg(text.new_records_added(num_records))
-                    pb = model.phone_book
+                    pb = main_phone_book.phone_book
                     view.show_contact(pb, text.empty_book)
                 else:
                     view.print_msg(text.too_many_records)
             case 9:
+                if main_phone_book.phone_book != main_phone_book.original_phone_book:
+                    answer = view.input_data(text.save_changes)
+                    if answer.lower() =='y':
+                        main_phone_book.save_file()
+                        view.print_msg(text.save_successful)
+                view.print_msg(text.good_day)
                 break
